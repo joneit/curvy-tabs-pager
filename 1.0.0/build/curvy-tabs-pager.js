@@ -1,3 +1,4 @@
+(function(){
 'use strict';
 
 function CurvyTabsPager(container, tabBar, toc, pageNum, subfolder) {
@@ -197,4 +198,5 @@ Page <input class="page-slider" type="range" min="1" max="3" value="1">\n\
 
 CurvyTabsPager.version = '1.0.0';
 
-module.exports = CurvyTabsPager;
+window.CurvyTabsPager = CurvyTabsPager;
+})();
