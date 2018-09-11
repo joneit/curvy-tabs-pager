@@ -1,0 +1,20 @@
+{
+  "name": "curvy-tabs-pager",
+  "version": "1.0.0",
+  "description": "Paged content for curvy-tabs tab bar",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo '(function(){' >build/curvy-tabs-pager.js; sed 's/module.exports =/window.CurvyTabsPager =/' index.js >>build/curvy-tabs-pager.js; echo '})();' >>build/curvy-tabs-pager.js; uglifyjs build/curvy-tabs-pager.js -cmo build/curvy-tabs-pager.min.js; ls -lahL build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joneit/curvy-tabs-pager.git"
+  },
+  "author": "Jonathan Eiten",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/joneit/curvy-tabs-pager/issues"
+  },
+  "homepage": "https://github.com/joneit/curvy-tabs-pager#readme"
+}
