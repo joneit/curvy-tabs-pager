@@ -53,7 +53,7 @@ Use `myPager.page(pageNumberOrName)` to programmatically switch between pages.
   <!-- end: conditional tabs -->
 </div>
 ```
-Conditional tabs can be `src`-less (or sourced with `about:blank`) but more typically would source a local `blank.html` that `<link>`s to a local CSS stylesheet for page content:
+Conditional tabs can be `src`-less (or sourced with `about:blank`) but more typically would source a local `blank.html` that `<link>`s to a local CSS stylesheet to style the page content:
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -113,8 +113,8 @@ Published in two formats:
    ```
 * A script to be loaded by the client at run-time (sets global `CurvyTabsPager`), either of:
    ```html
-   <script src="https://joneit.github.io/curvy-tabs/1.0.0/curvy-tabs.js"></script>
-   <script src="https://joneit.github.io/curvy-tabs/1.0.0/curvy-tabs.min.js"></script>
+   <script src="https://joneit.github.io/curvy-tabs/2.0.0/curvy-tabs.js"></script>
+   <script src="https://joneit.github.io/curvy-tabs/2.0.0/curvy-tabs.min.js"></script>
    ```
 
 ### API
@@ -127,14 +127,22 @@ var tabbedContentContainer = document.querySelector('.curvy-tabs-container'); //
 var tabbedContent = new CurvyTabs(tabbedContentContainer);
 tabBar.paint();
 ```
-The following instantiates a `CurvbyTabsPager` objects:
+The following instantiates a `CurvyTabsPager` objects:
 ```js
 var pagerContainer = document.getElementById('page-panel'); // (or whatever)
-var toc = [ 'Synopsis.html', 'Description.html', 'See Also.html']; // for example
-var startPageNum = 1;
-var subfolder = 'content/'; // or falsy or './' for no subfolder (or whatever)
+var options = { // all members are optional (values are examples):
+    toc: ['Synopsis.html', 'Description.html', 'See Also.html'],
+    maxPage: 3, // file names are 1.html, 2.html, 3.html.; ignored if toc given
+    startPage: 12, // may be page number or file name; omit for default (1)
+    subfolder: 'content/', // omit or falsy or './' for no subfolder
+    cookieName: 'page' // omit for default ('p'); falsy for no cookie
+};
 
-var myPager = new CurvyTabsPager(pagerContainer, tabbedContent, toc, startPageNum, subfolder);
+var myPager = new CurvyTabsPager(
+    pagerContainer, // required
+    tabbedContent,  // required
+    options         // required; must have `toc` or `maxPage`
+);
 ```
 
 #### `CurvyTabs.prototype.getPageNum(pageNumberOrName)` method
@@ -177,7 +185,7 @@ Fails silently if page does not exist.
 
 #### `CurvyTabsPager.version` static property
 
-Contains the version string `1.0.0` (major.minor.patch with no leading `v`).
+Contains the version string `2.0.0` (major.minor.patch with no leading `v`).
 
 ####  static property
 
@@ -187,9 +195,11 @@ If you want to change the stylesheet that gets injected into `<head>`.
 
 The stylesheet and the markup to be injected may be overridden if desired by setting these static properties before instantiation.
 
-
 ## See Also
 * `curvy-tabs` ([npm](https://npmjs.org/package/curvy-tabs), [github](https://github.com/joneit/curvy-tabs))
 
 ## Version History
-* `1.0.0` — Initial version
+* `2.0.0` (9/12/2018)
+   * Removed `toc`, `startPage`, and `subfolder` instantiation parameters in favor of a single `options` object parameter with those keys
+   * Add new instantiation option `option.maxPage` which can be given in place of `options.toc` in which case file names are the page numbers themselves (1.html, 2.html, _etc._)
+* `1.0.0` — Initial release (9/11/2018)

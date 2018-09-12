@@ -1,11 +1,19 @@
 'use strict';
 
-function CurvyTabsPager(container, tabBar, toc, pageNum, subfolder) {
+function CurvyTabsPager(container, tabBar, options) {
     this.container = container;
     this.tabBar = tabBar;
-    this.toc = toc;
-    this.num = pageNum;
-    this.subfolder = subfolder || '';
+
+    options = options || {};
+    this.toc = options.toc;
+    this.maxPage = this.toc ? this.toc.length : Number(options.maxPage);
+    this.num = options.startPage;
+    this.subfolder = options.subfolder || '';
+    this.cookieName = 'cookieName' in options ? options.cookieName : 'p';
+
+    if (!/^\d+$/.test(this.maxPage) || this.maxPage === 0) {
+        throw 'CurvyTabsPager options (4th param to constructor) must include `toc` (non-zero-length array) OR `maxPage` (positive integer).';
+    }
 
     this.tabBar.paint();
 
@@ -32,12 +40,12 @@ function CurvyTabsPager(container, tabBar, toc, pageNum, subfolder) {
 
     var numberEls = container.querySelectorAll('.page-number');
     this.numEl = numberEls[0]; // content to be set by page method
-    (this.maxEl = numberEls[1]).innerText = this.sliderEl.max = this.toc.length;
+    (this.maxEl = numberEls[1]).innerText = this.sliderEl.max = this.maxPage;
 
     window.addEventListener('curvy-tabs-pager-register', registerIframeEventHandler.bind(this));
     document.addEventListener('keydown', keydownEventHandler.bind(this));
 
-    this.page(this.getPageNum(pageNum) || 1);
+    this.page(this.getPageNum(this.num) || 1);
 }
 
 function injectCSS(document, html, id) {
@@ -91,7 +99,7 @@ function keydownEventHandler(e) {
                 this.page(--this.num);
             }
                 break;
-            case 'ArrowRight': if (this.num < this.toc.length) {
+            case 'ArrowRight': if (this.num < this.maxPage) {
                 this.page(++this.num);
             }
                 break;
@@ -105,11 +113,13 @@ CurvyTabsPager.prototype.getPageNum = function(pageNumOrName) {
     var n;
     if (/^\d+$/.test(pageNumOrName)) {
         n = Number(pageNumOrName);
-        if (1 > n || n > this.toc.length) {
+        if (1 > n || n > this.maxPage) {
             n = 0;
         }
-    } else {
+    } else if (this.toc) {
         n = 1 + this.toc.findIndex(function(filename) { return pageNumOrName === filename; });
+    } else {
+        n = 0;
     }
     return n;
 }
@@ -127,12 +137,14 @@ CurvyTabsPager.prototype.page = function(pageNumOrName, subfolder) {
         this.num = n;
 
         // save page number in a cookie for next visit or reload
-        var d = new Date;
-        d.setYear(d.getFullYear() + 1);
-        document.cookie = 'tutorial=' + this.num + '; expires=' + d.toUTCString();
+        if (this.cookieName) {
+            var d = new Date;
+            d.setYear(d.getFullYear() + 1);
+            document.cookie = this.cookieName + '=' + this.num + '; expires=' + d.toUTCString();
+        }
 
         // page transition
-        this.contentWindow.location.href = subfolder + this.toc[this.num - 1];
+        this.contentWindow.location.href = subfolder + (this.toc ? this.toc[this.num - 1] : this.num + '.html');
 
         // adjust page panel
         this.numEl.innerText = this.sliderEl.value = this.num;
@@ -141,7 +153,7 @@ CurvyTabsPager.prototype.page = function(pageNumOrName, subfolder) {
         this.goPrevEl.classList.toggle('page-button-enabled-prev', this.num !== 1);
 
         // hide the next button on last page
-        this.goNextEl.classList.toggle('page-button-enabled-next', this.num !== this.toc.length);
+        this.goNextEl.classList.toggle('page-button-enabled-next', this.num !== this.maxPage);
     }
 
     return n;
@@ -195,6 +207,6 @@ Page <input class="page-slider" type="range" min="1" max="3" value="1">\n\
 <span class="page-button page-button-enabled" title="Click to go to next page (or press right-arrow key)">&#x25ba;</span>\n\
 ';
 
-CurvyTabsPager.version = '1.0.0';
+CurvyTabsPager.version = '2.0.0';
 
 module.exports = CurvyTabsPager;
