@@ -1,10 +1,10 @@
 {
   "name": "curvy-tabs-pager",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Paged content for curvy-tabs tab bar",
   "main": "index.js",
   "scripts": {
-    "build": "echo '(function(){' >build/curvy-tabs-pager.js; sed 's/module.exports =/window.CurvyTabsPager =/' index.js >>build/curvy-tabs-pager.js; echo '})();' >>build/curvy-tabs-pager.js; uglifyjs build/curvy-tabs-pager.js -cmo build/curvy-tabs-pager.min.js; ls -lahL build",
+    "build": "sh build.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

@@ -1,28 +1,28 @@
 'use strict';
 
-function CurvyTabsPager(container, tabBar, options) {
-    this.container = container;
-    this.tabBar = tabBar;
+function CurvyTabsPager(pagerContainer, tabbedContent, options) {
+    this.container = pagerContainer;
+    this.tabBar = tabbedContent;
 
     options = options || {};
     this.toc = options.toc;
     this.maxPage = this.toc ? this.toc.length : Number(options.maxPage);
     this.num = options.startPage;
-    this.subfolder = options.subfolder || '';
+    this.path = options.path || options.subfolder || '';
     this.cookieName = 'cookieName' in options ? options.cookieName : 'p';
 
     if (!/^\d+$/.test(this.maxPage) || this.maxPage === 0) {
-        throw 'CurvyTabsPager options (4th param to constructor) must include `toc` (non-zero-length array) OR `maxPage` (positive integer).';
+        throw 'CurvyTabsPager: options.toc must be non-zero-length array OR options.maxPage must be positive integer.';
     }
 
-    this.tabBar.paint();
+    tabbedContent.paint();
 
     injectCSS(document, CurvyTabsPager.stylesheet);
 
-    container.innerHTML += CurvyTabsPager.html;
+    pagerContainer.innerHTML += CurvyTabsPager.html;
 
-    // find first iframe that is visible upon load
-    var iframe = Array.prototype.find.call(tabBar.container.querySelectorAll('iframe'), function(el) {
+    // find first tab with `src`-less `<iframe>` that is initially visible (on load, via `style` or `class` attribute)
+    var iframe = Array.prototype.find.call(tabbedContent.container.querySelectorAll('iframe:not([src])'), function(el) {
         return window.getComputedStyle(el).display !== 'none';
     });
 
@@ -30,15 +30,15 @@ function CurvyTabsPager(container, tabBar, options) {
     this.mainTab = iframe.parentElement;
 
     var pager = this;
-    var buttonEls = container.querySelectorAll('.page-button');
+    var buttonEls = pagerContainer.querySelectorAll('.page-button');
     (this.goPrevEl = buttonEls[0]).onclick = function() { pager.page(pager.num - 1); };
     (this.goNextEl = buttonEls[1]).onclick = function() { pager.page(pager.num + 1); };
 
-    this.sliderEl = container.querySelector('.page-slider');
+    this.sliderEl = pagerContainer.querySelector('.page-slider');
     this.sliderEl.oninput = function() { pager.page(this.value); };
     this.sliderEl.onchange = this.sliderEl.oninput; // for IE 11 range control which doesn't dispatch `input` events
 
-    var numberEls = container.querySelectorAll('.page-number');
+    var numberEls = pagerContainer.querySelectorAll('.page-number');
     this.numEl = numberEls[0]; // content to be set by page method
     (this.maxEl = numberEls[1]).innerText = this.sliderEl.max = this.maxPage;
 
@@ -72,18 +72,15 @@ function registerIframeEventHandler(e) {
     // Hide all conditional tabs
     this.tabBar.reset();
 
-    // Each curvy-tabs-conditional element should have a data-tab-name attribute that names a conditional tab.
-    // For each such element found, append its children to its conditional tab's body element and then show the tab.
+    // Each curvy-tab-conditional element should have a name attribute that names a conditional tab.
+    // For each such element found, copy its content to the conditional tab's <body> element and then show the tab.
     var conditionalTabElements = this.contentWindow.document.getElementsByClassName('curvy-tab-conditional');
     Array.prototype.forEach.call(conditionalTabElements, function(conditionalTabEl) {
         var name = conditionalTabEl.getAttribute('name');
         var conditionalWindow = this.tabBar.getTab(name).querySelector('iframe').contentWindow;
         var conditionalWindowBody = conditionalWindow.document.body;
 
-        conditionalWindowBody.innerHTML = '';
-        Array.prototype.forEach.call(conditionalTabEl.children, function(child) {
-            conditionalWindowBody.appendChild(child);
-        });
+        conditionalWindowBody.innerHTML = conditionalTabEl.innerHTML;
 
         this.tabBar.show(name);
     }, this);
@@ -124,12 +121,12 @@ CurvyTabsPager.prototype.getPageNum = function(pageNumOrName) {
     return n;
 }
 
-CurvyTabsPager.prototype.page = function(pageNumOrName, subfolder) {
+CurvyTabsPager.prototype.page = function(pageNumOrName, path) {
     var n = this.getPageNum(pageNumOrName);
 
     if (n) {
-        if (subfolder === undefined) {
-            subfolder = this.subfolder;
+        if (path === undefined) {
+            path = this.path;
         }
 
         this.tabBar.select(this.mainTab);
@@ -144,7 +141,7 @@ CurvyTabsPager.prototype.page = function(pageNumOrName, subfolder) {
         }
 
         // page transition
-        this.contentWindow.location.href = subfolder + (this.toc ? this.toc[this.num - 1] : this.num + '.html');
+        this.contentWindow.location.href = path + (this.toc ? this.toc[this.num - 1] : this.num + '.html');
 
         // adjust page panel
         this.numEl.innerText = this.sliderEl.value = this.num;
@@ -159,7 +156,20 @@ CurvyTabsPager.prototype.page = function(pageNumOrName, subfolder) {
     return n;
 };
 
-CurvyTabsPager.stylesheet = '\
+CurvyTabsPager.stylesheet = '\n\
+/* CONTENT I-FRAMES */\n\
+\n\
+.curvy-tabs-container iframe {\n\
+    position: absolute;\n\
+    top: 0;\n\
+    left: 0;\n\
+    width: 100%;\n\
+    height: calc(100% + 16px); /* 16px counters container\'s 8px left padding + 8px right padding */\n\
+    border: 0;\n\
+}\n\
+\n\
+/* PAGE NUMBER CONTROLS */\n\
+\n\
 .page-number {\n\
     display: inline-block;\n\
     width: 2em;\n\
@@ -167,7 +177,8 @@ CurvyTabsPager.stylesheet = '\
 }\n\
 .page-slider {\n\
     margin-left: .5em;\n\
-    width: 50px\n\
+    width: 50px;\n\
+    vertical-align: middle;\n\
 }\n\
 .page-button {\n\
     color: #d8d8d8;\n\
@@ -190,14 +201,6 @@ CurvyTabsPager.stylesheet = '\
 .page-button-enabled-next:active {\n\
     padding-left: 7px;\n\
     padding-right: 3px;\n\
-}\n\
-.curvy-tabs-container iframe {\n\
-    position: absolute;\n\
-    top: 0;\n\
-    left: 0;\n\
-    width: 100%;\n\
-    height: calc(100% + 16px); /* 16px is to ignore the 8px left and right padding of the container */\n\
-    border: 0;\n\
 }';
 
 CurvyTabsPager.html = '\n\
@@ -207,6 +210,6 @@ Page <input class="page-slider" type="range" min="1" max="3" value="1">\n\
 <span class="page-button page-button-enabled" title="Click to go to next page (or press right-arrow key)">&#x25ba;</span>\n\
 ';
 
-CurvyTabsPager.version = '2.0.0';
+CurvyTabsPager.version = '2.0.1';
 
 module.exports = CurvyTabsPager;
