@@ -7,7 +7,7 @@ function CurvyTabsPager(pagerContainer, tabbedContent, options) {
     options = options || {};
     this.toc = options.toc;
     this.maxPage = this.toc ? this.toc.length : Number(options.maxPage);
-    this.num = options.startPage;
+    this.num = this.getPageNum(options.startPage) || 1;
     this.path = options.path || options.subfolder || '';
     this.cookieName = 'cookieName' in options ? options.cookieName : 'p';
 
@@ -45,7 +45,7 @@ function CurvyTabsPager(pagerContainer, tabbedContent, options) {
     window.addEventListener('curvy-tabs-pager-register', registerIframeEventHandler.bind(this));
     document.addEventListener('keydown', keydownEventHandler.bind(this));
 
-    this.page(this.getPageNum(this.num) || 1);
+    this.page(this.num);
 }
 
 function injectCSS(document, html, id) {
@@ -119,7 +119,7 @@ CurvyTabsPager.prototype.getPageNum = function(pageNumOrName) {
         n = 0;
     }
     return n;
-}
+};
 
 CurvyTabsPager.prototype.page = function(pageNumOrName, path) {
     var n = this.getPageNum(pageNumOrName);
@@ -132,6 +132,8 @@ CurvyTabsPager.prototype.page = function(pageNumOrName, path) {
         this.tabBar.select(this.mainTab);
 
         this.num = n;
+
+        history.pushState(null, '', location.origin + location.pathname + '?p=' + n);
 
         // save page number in a cookie for next visit or reload
         if (this.cookieName) {
@@ -210,6 +212,6 @@ Page <input class="page-slider" type="range" min="1" max="3" value="1">\n\
 <span class="page-button page-button-enabled" title="Click to go to next page (or press right-arrow key)">&#x25ba;</span>\n\
 ';
 
-CurvyTabsPager.version = '2.0.1';
+CurvyTabsPager.version = '2.0.2';
 
 module.exports = CurvyTabsPager;

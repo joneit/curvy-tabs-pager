@@ -209,6 +209,9 @@ The stylesheet and the markup to be injected may be overridden if desired by set
 * `curvy-tabs` ([npm](https://npmjs.org/package/curvy-tabs), [github](https://github.com/joneit/curvy-tabs))
 
 ## Version History
+* `2.0.2` (9/26/2018)
+   * `options.startPage` now correctly accepts a page file name (as well as a page number)
+   * As user pages through tutorial, browser's query string is updated with `?p=n` (where _n_ = page number)
 * `2.0.1` (9/13/2018)
    * Fix defect in copying conditional tab content
    * Rename `options.subfolder` to `options.path` (however `options.subfolder` is still accepted for backwards compatibility)
