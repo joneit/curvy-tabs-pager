@@ -212,6 +212,6 @@ Page <input class="page-slider" type="range" min="1" max="3" value="1">\n\
 <span class="page-button page-button-enabled" title="Click to go to next page (or press right-arrow key)">&#x25ba;</span>\n\
 ';
 
-CurvyTabsPager.version = '2.0.2';
+CurvyTabsPager.version = '2.0.3';
 
 module.exports = CurvyTabsPager;

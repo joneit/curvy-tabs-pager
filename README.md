@@ -209,6 +209,8 @@ The stylesheet and the markup to be injected may be overridden if desired by set
 * `curvy-tabs` ([npm](https://npmjs.org/package/curvy-tabs), [github](https://github.com/joneit/curvy-tabs))
 
 ## Version History
+* `2.0.3`
+   * Update build.sh to create `umd` folder for `unpkg.com` CDN support for this and all future versions. See revised installation snippet above. (`curvy-tabs-pager.github.io` will no longer be updated with new versions, albeit previous versions will continue to be accessible.)
 * `2.0.2` (9/26/2018)
    * `options.startPage` now correctly accepts a page file name (as well as a page number)
    * As user pages through tutorial, browser's query string is updated with `?p=n` (where _n_ = page number)
