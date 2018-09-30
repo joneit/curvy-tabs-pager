@@ -126,9 +126,10 @@ Published in two formats:
    ```
 * A script to be loaded by the client at run-time (sets global `CurvyTabsPager`), either of:
    ```html
-   <script src="https://joneit.github.io/curvy-tabs/2.0.1/curvy-tabs.js"></script>
-   <script src="https://joneit.github.io/curvy-tabs/2.0.1/curvy-tabs.min.js"></script>
+   <script src="https://unpkg.com/curvy-tabs-pager@2.0/umd/curvy-tabs-pager.js"></script>
+   <script src="https://unpkg.com/curvy-tabs-pager@2.0/umd/curvy-tabs-pager.min.js"></script>
    ```
+   Any [SEMVER](//semver.org) string can be used. `2.0` in the above means load the latest of the 2.0.* range. See the [npm semver calculator](//semver.npmjs.com) and npm’s [semantic versioning](https://docs.npmjs.com/misc/semver) page.
 
 ### API
 
@@ -209,6 +210,8 @@ The stylesheet and the markup to be injected may be overridden if desired by set
 * `curvy-tabs` ([npm](https://npmjs.org/package/curvy-tabs), [github](https://github.com/joneit/curvy-tabs))
 
 ## Version History
+* `2.0.4`
+   * Update README.md with correct `<script>` tag snippet
 * `2.0.3`
    * Update build.sh to create `umd` folder for `unpkg.com` CDN support for this and all future versions. See revised installation snippet above. (`curvy-tabs-pager.github.io` will no longer be updated with new versions, albeit previous versions will continue to be accessible.)
 * `2.0.2` (9/26/2018)
