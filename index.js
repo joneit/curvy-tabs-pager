@@ -17,7 +17,12 @@ function CurvyTabsPager(pagerContainer, tabbedContent, options) {
 
     tabbedContent.paint();
 
-    injectCSS(document, CurvyTabsPager.stylesheet);
+    var stylesheet = CurvyTabsPager.stylesheet;
+    if (navigator.platform.indexOf('Win') >= 0) {
+        // Windows vs. Mac fonts reverse these two Unicode characters for some reason
+        stylesheet = stylesheet.replace(/25c0/g, '25c4');
+    }
+    injectCSS(document, stylesheet);
 
     pagerContainer.innerHTML += CurvyTabsPager.html;
 
