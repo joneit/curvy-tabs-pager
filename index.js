@@ -31,8 +31,10 @@ function CurvyTabsPager(pagerContainer, tabbedContent, options) {
 
     var pager = this;
     var buttonEls = pagerContainer.querySelectorAll('.page-button');
-    (this.goPrevEl = buttonEls[0]).onclick = function() { pager.page(pager.num - 1); };
-    (this.goNextEl = buttonEls[1]).onclick = function() { pager.page(pager.num + 1); };
+    (this.goFirstEl = buttonEls[0]).onclick = function() { pager.page(1); };
+    (this.goPrevEl = buttonEls[1]).onclick = function() { pager.page(pager.num - 1); };
+    (this.goNextEl = buttonEls[2]).onclick = function() { pager.page(pager.num + 1); };
+    (this.goLastEl = buttonEls[3]).onclick = function() { pager.page(pager.maxPage); };
 
     this.sliderEl = pagerContainer.querySelector('.page-slider');
     this.sliderEl.oninput = function() { pager.page(this.value); };
@@ -148,11 +150,13 @@ CurvyTabsPager.prototype.page = function(pageNumOrName, path) {
         // adjust page panel
         this.numEl.innerText = this.sliderEl.value = this.num;
 
-        // hide the prev button on next page
-        this.goPrevEl.classList.toggle('page-button-enabled-prev', this.num !== 1);
+        // hide the first and prev buttons on first page
+        this.goFirstEl.classList.toggle('page-button-enabled', this.num > 1);
+        this.goPrevEl.classList.toggle('page-button-enabled', this.num > 1);
 
-        // hide the next button on last page
-        this.goNextEl.classList.toggle('page-button-enabled-next', this.num !== this.maxPage);
+        // hide the next and last buttons on last page
+        this.goNextEl.classList.toggle('page-button-enabled', this.num < this.maxPage);
+        this.goLastEl.classList.toggle('page-button-enabled', this.num < this.maxPage);
     }
 
     return n;
@@ -180,21 +184,33 @@ CurvyTabsPager.stylesheet = '\n\
 .page-slider {\n\
     margin-left: .5em;\n\
     width: 50px;\n\
+    padding: 0;\n\
     vertical-align: middle;\n\
 }\n\
 .page-button {\n\
     color: #d8d8d8;\n\
-    user-select: none;\n\
-    cursor: pointer;\n\
-    border: 1px solid transparent;\n\
-    border-radius: 5px;\n\
-    padding: 3px 5px 1px 5px;\n\
+    padding: 0 5px;\n\
+    vertical-align: middle;\n\
+    font-size: 120%;\n\
 }\n\
-.page-button-enabled-prev, .page-button-enabled-next {\n\
+.page-button:nth-of-type(1)::before {\n\
+    content: \'\\2595\\25c0\';\n\
+}\n\
+.page-button:nth-of-type(2)::before {\n\
+    content: \'\\25c0\';\n\
+}\n\
+.page-button:nth-of-type(3)::before {\n\
+    content: \'\\25ba\';\n\
+}\n\
+.page-button:nth-of-type(4)::before {\n\
+    content: \'\\25ba\\258f\';\n\
+}\n\
+.page-button-enabled {\n\
     color: black;\n\
+    cursor: pointer;\n\
 }\n\
 .page-button-enabled:hover, .page-button-enabled:active {\n\
-    border: 1px solid grey;\n\
+    color: red;\n\
 }\n\
 .page-button-enabled-prev:active {\n\
     padding-left: 3px;\n\
@@ -206,12 +222,14 @@ CurvyTabsPager.stylesheet = '\n\
 }';
 
 CurvyTabsPager.html = '\n\
-<span class="page-button page-button-enabled" title="Click to go to previous page (or press left-arrow key)">&#x25c0;</span>\n\
+<span class="page-button" title="Click to go to first page"></span>\n\
+<span class="page-button" title="Click to go to previous page (or press left-arrow key)"></span>\n\
 Page <input class="page-slider" type="range" min="1" max="3" value="1">\n\
 <b class="page-number"></b> of <b class="page-number"></b>\n\
-<span class="page-button page-button-enabled" title="Click to go to next page (or press right-arrow key)">&#x25ba;</span>\n\
+<span class="page-button" title="Click to go to next page (or press right-arrow key)"></span>\n\
+<span class="page-button" title="Click to go to last page"></span>\n\
 ';
 
-CurvyTabsPager.version = '2.0.4';
+CurvyTabsPager.version = '2.0.5';
 
 module.exports = CurvyTabsPager;

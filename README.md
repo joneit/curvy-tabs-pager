@@ -198,9 +198,28 @@ This method performs the following actions:
 
 Fails silently if page does not exist.
 
+#### Button elements
+
+The following instance variables reference DOM elements:
+
+Variable | Description
+-------- | -----------
+`myPager.goFirstEl` | First page button
+`myPager.goPrevEl` | Next page button
+`myPager.goNextEl` | Previous page button
+`myPager.goLastEl` | Final page button
+`myPager.sliderEl` | Page range control
+`myPager.numEl` | Current page number
+`myPager.maxEl` | Final page number
+
+For example, to hide the first and final buttons:
+```js
+myPager.goFirstEl.style.display = myPager.goLastEl.style.display = 'none';
+```
+
 #### `CurvyTabsPager.version` static property
 
-Contains the version string `2.0.1` (major.minor.patch with no leading `v`).
+Contains the version string `2.0.5` (major.minor.patch with no leading `v`).
 
 #### `CurvyTabsPager.stylesheet` and `CurvyTabsPager.html` static properties
 
@@ -210,10 +229,14 @@ The stylesheet and the markup to be injected may be overridden if desired by set
 * `curvy-tabs` ([npm](https://npmjs.org/package/curvy-tabs), [github](https://github.com/joneit/curvy-tabs))
 
 ## Version History
+* `2.0.5`
+   * Add first page and last page buttons
+   * Document instance variables that reference DOM elements
+   * Retire `page-button-enabled-next` and `page-button-enabled-prev` CSS classes
 * `2.0.4`
    * Update README.md with correct `<script>` tag snippet
 * `2.0.3`
-   * Update build.sh to create `umd` folder for `unpkg.com` CDN support for this and all future versions. See revised installation snippet above. (`curvy-tabs-pager.github.io` will no longer be updated with new versions, albeit previous versions will continue to be accessible.)
+   * Update build.sh to create `umd` folder for `unpkg.com` CDN support for this and all future versions. See revised installation snippet above. (`curvy-tabs-pager.github.io` will no longer be updated with new versions, although previous versions will remain there.)
 * `2.0.2` (9/26/2018)
    * `options.startPage` now correctly accepts a page file name (as well as a page number)
    * As user pages through tutorial, browser's query string is updated with `?p=n` (where _n_ = page number)
