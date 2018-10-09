@@ -11,7 +11,7 @@ Paging tab bar consists of (in any order):
 * The _paging user control_ panel (required)
 * A _main paging tab_ (required) - Tab A in this case
    * Represented by `<div><iframe></iframe><div>` - loaded by the pager with markup for itself and other paging tabs
-   * Contains an `<iframe>` with no `src` attribute
+   * The main frame is the first such tab whose `<iframe>` has no `src` attribute
 * Zero or more _static tabs_ (optional)
    * Represent by `<div>arbitrary static content</div>`
    * May include an `<iframe>` but it must have a `src` attribute (to differentiate it from the main tab)
@@ -68,7 +68,7 @@ Pages loaded into the main tab’s `<iframe>` must register with the pager in th
 ```js
 parent.dispatchEvent(new CustomEvent('curvy-tabs-pager-register', { detail: { window: window }}));
 ```
-> Note: If you wish to maintain compatibility with **IE 11**, your script must also include the [`CustomEvent` polyfill](https://developer.mozilla.org/docs/Web/API/CustomEvent/CustomEvent#Polyfill).
+> Note: This module injects the [`CustomEvent` polyfill](https://developer.mozilla.org/docs/Web/API/CustomEvent/CustomEvent#Polyfill) required by IE 11.
 
 #### Conditional tab iframe source markup
 Conditional tabs typically source a local `blank.html` that `<link>`s to a local CSS stylesheet to style the page content:
@@ -219,16 +219,25 @@ myPager.goFirstEl.style.display = myPager.goLastEl.style.display = 'none';
 
 #### `CurvyTabsPager.version` static property
 
-Contains the version string `2.0.7` (major.minor.patch with no leading `v`).
+Contains the version string `2.1.0` (major.minor.patch with no leading `v`).
 
 #### `CurvyTabsPager.stylesheet` and `CurvyTabsPager.html` static properties
 
 The stylesheet and the markup to be injected may be overridden if desired by setting these static properties before instantiation.
 
+### Events
+
+#### `curvy-tabs-pager-paged`
+
+Dispatched to pager container on paging.
+
 ## See Also
 * `curvy-tabs` ([npm](https://npmjs.org/package/curvy-tabs), [github](https://github.com/joneit/curvy-tabs))
 
 ## Version History
+* `2.1.0`
+   * Dispatch event `curvy-tabs-pager-paged` to pager container element on page transitions.
+   * Add `CustomEvent` polyfill for IE 11.
 * `2.0.7`
    * IE 11 issue: Avoid 2-param overload of DOMTokenList.prototype.toggle
 * `2.0.6`

@@ -1,6 +1,18 @@
 'use strict';
 
 function CurvyTabsPager(pagerContainer, tabbedContent, options) {
+
+    // IE 11 missing CustomEvent constructor
+    if ( typeof window.CustomEvent !== "function" ) {
+        window.CustomEvent = function(event, params) {
+            params = params || { bubbles: false, cancelable: false, detail: undefined };
+            var evt = document.createEvent('CustomEvent');
+            evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+            return evt;
+        };
+        window.CustomEvent.prototype = window.Event.prototype;
+    }
+
     this.container = pagerContainer;
     this.tabBar = tabbedContent;
 
@@ -150,7 +162,8 @@ CurvyTabsPager.prototype.page = function(pageNumOrName, path) {
         }
 
         // page transition
-        this.contentWindow.location.href = path + (this.toc ? this.toc[this.num - 1] : this.num + '.html');
+        var pageName = this.toc ? this.toc[this.num - 1] : this.num + '.html';
+        this.contentWindow.location.href = path + pageName;
 
         // adjust page panel
         this.numEl.innerText = this.sliderEl.value = this.num;
@@ -165,6 +178,15 @@ CurvyTabsPager.prototype.page = function(pageNumOrName, path) {
         method = this.num < this.maxPage ? 'add' : 'remove';
         this.goNextEl.classList[method](ena);
         this.goLastEl.classList[method](ena);
+
+        this.container.dispatchEvent(new CustomEvent('curvy-tabs-pager-paged', {
+            bubbles: true,
+            cancelBubble: true,
+            cancelable: true,
+            detail: {
+                pager: this
+            }
+        }));
     }
 
     return n;
@@ -238,6 +260,6 @@ Page <input class="page-slider" type="range" min="1" max="3" value="1">\n\
 <span class="page-button" title="Click to go to last page"></span>\n\
 ';
 
-CurvyTabsPager.version = '2.0.7';
+CurvyTabsPager.version = '2.1.0';
 
 module.exports = CurvyTabsPager;

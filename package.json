@@ -1,6 +1,6 @@
 {
   "name": "curvy-tabs-pager",
-  "version": "2.0.7",
+  "version": "2.1.0",
   "description": "Paged content for curvy-tabs tab bar",
   "main": "index.js",
   "scripts": {
