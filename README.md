@@ -219,7 +219,7 @@ myPager.goFirstEl.style.display = myPager.goLastEl.style.display = 'none';
 
 #### `CurvyTabsPager.version` static property
 
-Contains the version string `2.0.5` (major.minor.patch with no leading `v`).
+Contains the version string `2.0.6` (major.minor.patch with no leading `v`).
 
 #### `CurvyTabsPager.stylesheet` and `CurvyTabsPager.html` static properties
 
@@ -229,6 +229,8 @@ The stylesheet and the markup to be injected may be overridden if desired by set
 * `curvy-tabs` ([npm](https://npmjs.org/package/curvy-tabs), [github](https://github.com/joneit/curvy-tabs))
 
 ## Version History
+* `2.0.6`
+   * Substitute `25c4` for `25c0` on Windows to get a better "previous" and "first" (left arrow) icons
 * `2.0.5`
    * Add first page and last page buttons
    * Document instance variables that reference DOM elements

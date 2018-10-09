@@ -17,7 +17,12 @@ function CurvyTabsPager(pagerContainer, tabbedContent, options) {
 
     tabbedContent.paint();
 
-    injectCSS(document, CurvyTabsPager.stylesheet);
+    var stylesheet = CurvyTabsPager.stylesheet;
+    if (navigator.platform.indexOf('Win') >= 0) {
+        // Windows vs. Mac fonts reverse these two Unicode characters for some reason
+        stylesheet = stylesheet.replace(/25c0/g, '25c4');
+    }
+    injectCSS(document, stylesheet);
 
     pagerContainer.innerHTML += CurvyTabsPager.html;
 
@@ -230,6 +235,6 @@ Page <input class="page-slider" type="range" min="1" max="3" value="1">\n\
 <span class="page-button" title="Click to go to last page"></span>\n\
 ';
 
-CurvyTabsPager.version = '2.0.5';
+CurvyTabsPager.version = '2.0.6';
 
 module.exports = CurvyTabsPager;
