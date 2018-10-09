@@ -156,12 +156,15 @@ CurvyTabsPager.prototype.page = function(pageNumOrName, path) {
         this.numEl.innerText = this.sliderEl.value = this.num;
 
         // hide the first and prev buttons on first page
-        this.goFirstEl.classList.toggle('page-button-enabled', this.num > 1);
-        this.goPrevEl.classList.toggle('page-button-enabled', this.num > 1);
+        var ena = 'page-button-enabled';
+        var method = this.num > 1 ? 'add' : 'remove';  // IE 11: do this instead of using .toggle with 2 params
+        this.goFirstEl.classList[method](ena);
+        this.goPrevEl.classList[method](ena);
 
         // hide the next and last buttons on last page
-        this.goNextEl.classList.toggle('page-button-enabled', this.num < this.maxPage);
-        this.goLastEl.classList.toggle('page-button-enabled', this.num < this.maxPage);
+        method = this.num < this.maxPage ? 'add' : 'remove';
+        this.goNextEl.classList[method](ena);
+        this.goLastEl.classList[method](ena);
     }
 
     return n;
@@ -235,6 +238,6 @@ Page <input class="page-slider" type="range" min="1" max="3" value="1">\n\
 <span class="page-button" title="Click to go to last page"></span>\n\
 ';
 
-CurvyTabsPager.version = '2.0.6';
+CurvyTabsPager.version = '2.0.7';
 
 module.exports = CurvyTabsPager;
