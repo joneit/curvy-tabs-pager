@@ -1,18 +1,6 @@
 'use strict';
 
 function CurvyTabsPager(pagerContainer, tabbedContent, options) {
-
-    // IE 11 missing CustomEvent constructor
-    if ( typeof window.CustomEvent !== "function" ) {
-        window.CustomEvent = function(event, params) {
-            params = params || { bubbles: false, cancelable: false, detail: undefined };
-            var evt = document.createEvent('CustomEvent');
-            evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
-            return evt;
-        };
-        window.CustomEvent.prototype = window.Event.prototype;
-    }
-
     this.container = pagerContainer;
     this.tabBar = tabbedContent;
 
@@ -22,6 +10,9 @@ function CurvyTabsPager(pagerContainer, tabbedContent, options) {
     this.num = this.getPageNum(options.startPage) || 1;
     this.path = options.path || options.subfolder || '';
     this.cookieName = 'cookieName' in options ? options.cookieName : 'p';
+    if ('autoSwitch' in options) {
+        this.autoSwitch = options.autoSwitch;  // override default in prototype
+    }
 
     if (!/^\d+$/.test(this.maxPage) || this.maxPage === 0) {
         throw 'CurvyTabsPager: options.toc must be non-zero-length array OR options.maxPage must be positive integer.';
@@ -36,6 +27,7 @@ function CurvyTabsPager(pagerContainer, tabbedContent, options) {
     }
     injectCSS(document, stylesheet);
 
+    pagerContainer.classList.add('pager-container');
     pagerContainer.innerHTML += CurvyTabsPager.html;
 
     // find first tab with `src`-less `<iframe>` that is initially visible (on load, via `style` or `class` attribute)
@@ -140,6 +132,8 @@ CurvyTabsPager.prototype.getPageNum = function(pageNumOrName) {
     return n;
 };
 
+CurvyTabsPager.prototype.autoSwitch = true; // default for autoSwitch when not overridden
+
 CurvyTabsPager.prototype.page = function(pageNumOrName, path) {
     var n = this.getPageNum(pageNumOrName);
 
@@ -148,7 +142,9 @@ CurvyTabsPager.prototype.page = function(pageNumOrName, path) {
             path = this.path;
         }
 
-        this.tabBar.select(this.mainTab);
+        if (this.autoSwitch) {
+            this.tabBar.select(this.mainTab);
+        }
 
         this.num = n;
 
@@ -206,6 +202,10 @@ CurvyTabsPager.stylesheet = '\n\
 \n\
 /* PAGE NUMBER CONTROLS */\n\
 \n\
+.pager-container {\n\
+    user-select: none;\
+    white-space: nowrap;\n\
+}\n\
 .page-number {\n\
     display: inline-block;\n\
     width: 2em;\n\
@@ -260,6 +260,6 @@ Page <input class="page-slider" type="range" min="1" max="3" value="1">\n\
 <span class="page-button" title="Click to go to last page"></span>\n\
 ';
 
-CurvyTabsPager.version = '2.1.0';
+CurvyTabsPager.version = '2.2.0';
 
 module.exports = CurvyTabsPager;

@@ -61,6 +61,8 @@ var myPager = new CurvyTabsPager(pagerContainer, tabbedContent, options);
 * Injects the paging user control markup into given container element `pagerContainer`
 * Wires the user control up to the `CurvyTabs` tab bar given in `tabbedContent`
 
+See the [`CurvyTabsPager` constructor](#curvytabspager-constructor) in the API section below for more details.
+
 In addition to the user interacting with the paging user control, the [`myPager.page(pageNumberOrName)`](#curvytabsprototypepagepagenumberorname-path-method) method may be called to programmatically switch between pages.
 
 #### Main tab page script
@@ -146,10 +148,11 @@ The following instantiates a `CurvyTabsPager` object (values are illustrative):
 var pagerContainer = document.getElementById('page-panel');
 var options = { // required: toc or maxPage; the rest are optional
     toc: ['Synopsis.html', 'Description.html', 'See Also.html'],
-    maxPage: 3, // file names are 1.html, 2.html, 3.html.; ignored if `toc` given
-    startPage: 12, // may be page number or file name; omit for default (first page: Synopsis.html or 1.html)
-    path: 'content/', // omit or falsy value or './' for default (no path prefixed)
-    cookieName: 'page' // omit for default ('p'); falsy value means don’t set cookie
+    maxPage: 3, // iff `toc` given, means file names are 1.html, 2.html, 3.html
+    startPage: 12, // may be page number or file name (default: first page)
+    path: 'content/', // default = no path prefixed (synonym: `subfolder`)
+    cookieName: 'page', // falsy value means don’t set cookie at all (default: 'p')
+    autoSwitch: false // falsy means don’t switch to main tab on new page (default: true)
 };
 
 var myPager = new CurvyTabsPager(
@@ -158,6 +161,8 @@ var myPager = new CurvyTabsPager(
     options         // required; must have `toc` or `maxPage`
 );
 ```
+
+Note that `path`, `cookieName`, and `autoSwitch` are instance vars that can also be set after instantiation.
 
 #### `CurvyTabs.prototype.getPageNum(pageNumberOrName)` method
 
@@ -189,12 +194,13 @@ myPager.page('Description.html'); // also goes to 2nd page
 ```
 
 This method performs the following actions:
-* Navigates iframe to the new page
-* Displays new page number
-* Disables previous page icon if first page
-* Disables next page icon if last page
-* Repositions range control
-* Processes conditional tab content and shows/hides them as needed
+* Navigate iframe to the new page
+* Display new page number
+* Disable _fist_ and _previous_ page icons iff first page
+* Disable _next_ and _final_ page icons iff last page
+* Reposition range control
+* Switch to main tab iff `autoSwitch` property is truthy (which is the default)
+* Copy conditional tab content to conditional tabs and shows/hides them as needed
 
 Fails silently if page does not exist.
 
@@ -219,7 +225,7 @@ myPager.goFirstEl.style.display = myPager.goLastEl.style.display = 'none';
 
 #### `CurvyTabsPager.version` static property
 
-Contains the version string `2.1.0` (major.minor.patch with no leading `v`).
+Contains the version string `2.2.0` (major.minor.patch with no leading `v`).
 
 #### `CurvyTabsPager.stylesheet` and `CurvyTabsPager.html` static properties
 
@@ -235,9 +241,12 @@ Dispatched to pager container on paging.
 * `curvy-tabs` ([npm](https://npmjs.org/package/curvy-tabs), [github](https://github.com/joneit/curvy-tabs))
 
 ## Version History
+* `2.2.0`
+   * Add `autoSwitch` property and instantiation option
+   * Remove `CustomEvent` polyfill because its now installed in `curvy-tabs`
 * `2.1.0`
-   * Dispatch event `curvy-tabs-pager-paged` to pager container element on page transitions.
-   * Add `CustomEvent` polyfill for IE 11.
+   * Dispatch event `curvy-tabs-pager-paged` to pager container element on page transitions
+   * Add `CustomEvent` polyfill for IE 11
 * `2.0.7`
    * IE 11 issue: Avoid 2-param overload of DOMTokenList.prototype.toggle
 * `2.0.6`
